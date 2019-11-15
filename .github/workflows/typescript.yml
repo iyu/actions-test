@@ -1,0 +1,39 @@
+name: typescript actions
+
+on:
+  push:
+    paths:
+      - typescript/**
+
+env:
+  NODE_VERSION: 12
+
+jobs:
+  lint:
+    name: Lint Checker
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+      - name: Install NodeJS ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: NPM Install
+        run: npm install
+        working-directory: ./typescript
+      - name: Symbolic Link # action-eslintがトップ階層にファイルがないと動かないので
+        run: |
+          ls typescript | grep -v README.md | xargs -L 1 -I {} ln -s typescript/{} .
+          ln -s typescript/.eslintrc.yml .
+      - name: ESLint
+        uses: icrawl/action-eslint@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          job-name: ESLint
+          lint-all: true
+          default-dir: .
+
