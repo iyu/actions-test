@@ -8,17 +8,7 @@ jobs:
     name: Pull Request Milestone
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-        with:
-          repository: iyu/actions-milestone
-          ref: master
-          fetch-depth: 1
-          path: actions-test/actions-milestone
-      - run: npm ci
-        working-directory: ./actions-milestone
-      - run: npm run build
-        working-directory: ./actions-milestone
-      - uses: ./actions-milestone
+      - uses: iyu/actions-milestone@v1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/milestone.yml
