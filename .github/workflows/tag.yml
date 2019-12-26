@@ -1,0 +1,19 @@
+name: create release note on tag
+
+on:
+  pull_request: {}
+  # push:
+  #   tags:
+  #     - "v*.*.*"
+
+jobs:
+  release:
+    name: Create Release Note
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - run: git log --pretty="format:- [%h] - %s (%an)" --date=short
+        id: log
+      - run: echo "${{ steps.log.outputs.stdout }}"
