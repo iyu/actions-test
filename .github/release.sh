@@ -26,6 +26,7 @@ release_body="## Notable Changes
 ${version_logs}
 
 </details>"
+release_body=$(echo "${release_body}" | sed ':a;N;$!ba;s/\n/\\n/g')
 
 # API
 curl s -X POST ${api_url} \
@@ -36,7 +37,6 @@ curl s -X POST ${api_url} \
   "name": "${release_name}",
   "body": "${release_body}",
   "draft": false,
-  "prerelease": false
+  "prerelease": true
 }
 EOS
-
