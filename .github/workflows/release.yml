@@ -11,43 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - run: |
-          echo ${{ github.ref }} | sed -e 's/^refs\/tags\///'
-          git tag --list --sort=-v:refname
-          date '+%F'
-      - id: git
-        run: |
-          CURRENT_VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///')
-          BEFORE_VERSION=$(git tag --list --sort=-v:refname | grep -e '^v[0-9]*\.[0-9]*\.[0-9]*$' | grep ${CURRENT_VERSION} -A 1 | tail -n 1)
-          VERSION_LOGS=$(git log ${BEFORE_VERSION}..${CURRENT_VERSION} --pretty="format:- [%h] - %s (%an)" --date=short | grep -v 'Merge branch.*\(cloudbuild\)')
-          RELEASE_BODY="## Notable Changes
-          <details>
-          
-          - template
-          
-          </details>
-          
-          ## Commits
-          <details>
-          
-          ${VERSION_LOGS}
-          
-          </details>"
-          
-          VERSION_LOGS=$(echo "${VERSION_LOGS}" | sed ':a;N;$!ba;s/\n/\\n/g')
-          RELEASE_BODY=$(echo "${RELEASE_BODY}" | sed ':a;N;$!ba;s/\n/\\n/g')
-          echo "::set-output name=CURRENT_VERSION::${CURRENT_VERSION}"
-          echo "::set-output name=BEFORE_VERSION::${BEFORE_VERSION}"
-          echo "::set-output name=VERSION_LOGS::${VERSION_LOGS}"
-          echo "::set-output name=RELEASE_BODY::${RELEASE_BODY}"
-          echo "::set-output name=RELEASE_NAME::$(date '+%F')"
-        env:  
-          TZ: Asia/Tokyo
-      - uses: actions/create-release@master
+      - run: .github/release.sh
         env:
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: "${{ steps.git.outputs.RELEASE_NAME }}"
-          body: "${{ steps.git.outputs.RELEASE_BODY }}"
-          prerelease: true
