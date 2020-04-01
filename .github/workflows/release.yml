@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - run: |
       - id: git
+          echo ${{ github.ref }} | sed -e 's/^refs\/tags\///'
+          git tag --list --sort=-v:refname
         run: |
           CURRENT_VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///')
           BEFORE_VERSION=$(git tag --list --sort=-v:refname | grep -e '^v[0-9]*\.[0-9]*\.[0-9]*$' | grep ${CURRENT_VERSION} -A 1 | tail -n 1)
