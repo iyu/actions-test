@@ -28,7 +28,7 @@ ${version_logs}
 </details>"
 
 # API
-curl s -X POST ${apu_url} \
+curl s -X POST ${api_url} \
   -H "Authorization: token ${github_token}" \
   -d @- << EOS
 {
