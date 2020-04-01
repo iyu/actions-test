@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - run: |
+          echo ${{ github.ref }} | sed -e 's/^refs\/tags\///'
+          git tag --list --sort=-v:refname
+          date '+%F'
       - id: git
         run: |
           CURRENT_VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///')
@@ -30,8 +34,8 @@ jobs:
           
           </details>"
           
-          VERSION_LOGS=$(echo "${VERSION_LOGS}")
-          RELEASE_BODY=$(echo "${RELEASE_BODY}")
+          VERSION_LOGS=$(echo "${VERSION_LOGS}" | sed ':a;N;$!ba;s/\n/\\n/g')
+          RELEASE_BODY=$(echo "${RELEASE_BODY}" | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "::set-output name=CURRENT_VERSION::${CURRENT_VERSION}"
           echo "::set-output name=BEFORE_VERSION::${BEFORE_VERSION}"
           echo "::set-output name=VERSION_LOGS::${VERSION_LOGS}"
