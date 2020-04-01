@@ -14,6 +14,7 @@ jobs:
       - run: |
           echo ${{ github.ref }} | sed -e 's/^refs\/tags\///'
           git tag --list --sort=-v:refname
+          date '+%F'
       - id: git
         run: |
           CURRENT_VERSION=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\///')
